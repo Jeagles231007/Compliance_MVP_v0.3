@@ -1,7 +1,7 @@
 # These imports will still use the correct versions (python-docx and fpdf2)
 import importlib.util
-
-from openai import OpenAI
+import openai
+# from openai import OpenAI
 from docx import Document
 from fpdf import FPDF
 import os
@@ -34,7 +34,7 @@ def get_api_key():
 
 
 OPENAI_API_KEY = get_api_key()
-client = OpenAI(api_key=OPENAI_API_KEY)
+openai.api_key = OPENAI_API_KEY
 
 # VOID
 # Insert OpenAI API key here when actually deploying
@@ -67,7 +67,7 @@ def generate_policy(company_name: str, industry: str, jurisdiction: str, size: s
     - Write in polished prose suitable for a corporate handbook.
     """
 
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a compliance consultant generating policies for businesses."},
