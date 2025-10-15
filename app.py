@@ -10,6 +10,31 @@
 import streamlit as st
 import tempfile
 from policy_generator import generate_policy, save_to_docx, save_to_pdf
+import os
+
+
+# --- PASSWORD PROTECTION ---
+def check_password():
+    """Simple password gate using Streamlit session state."""
+    def password_entered():
+        if st.session_state["password"] == st.secrets["app_password"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # Show password input
+        st.text_input("Enter access password", type="password", on_change=password_entered, key="password")
+        st.stop()
+    elif not st.session_state["password_correct"]:
+        st.text_input("Enter access password", type="password", on_change=password_entered, key="password")
+        st.error("❌ Incorrect password. Please try again.")
+        st.stop()
+    # If correct password, continue the app
+
+
+check_password()
 
 # -----------------------------------------------------
 # PAGE CONFIG & BRANDING
