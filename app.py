@@ -78,7 +78,7 @@ st.markdown("""
 # SIDEBAR BRANDING
 # -----------------------------------------------------
 with st.sidebar:
-    st.image("cyphera_logo.png", width=180)  # Add your logo in same folder as app.py
+    st.image("cyphera.png", width=180)  # Add your logo in same folder as app.py
     st.markdown("### About Cyphera")
     st.write(
         "Cyphera helps organisations generate **AI-powered compliance documents** instantly. "
