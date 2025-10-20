@@ -65,9 +65,75 @@ def check_license():
     st.stop()
 
 
-if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
-    check_license()
-    st.stop()
+# -----------------------------------------------------
+# CUSTOM CSS FOR MODERN UI
+# -----------------------------------------------------
+st.markdown("""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        html, body, [class*="css"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1C1C1C;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #5C5C5C;
+            margin-bottom: 2rem;
+        }
+
+        .stTextInput>div>div>input, .stSelectbox>div>div>select {
+            background-color: #F8F9FB !important;
+            border-radius: 10px !important;
+        }
+
+        .stButton>button {
+            background: linear-gradient(90deg, #2563EB, #1E40AF);
+            color: white;
+            border: none;
+            padding: 0.6em 1.5em;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .stButton>button:hover {
+            background: linear-gradient(90deg, #1E40AF, #2563EB);
+            transform: scale(1.02);
+            transition: 0.2s ease-in-out;
+        }
+
+        .stForm {
+            background-color: white;
+            border-radius: 15px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        footer {visibility: hidden;}
+
+        .logout-button > button {
+            background: none !important;
+            color: #6B7280 !important;  /* grey text */
+            border: none !important;
+            font-size: 0.9rem !important;
+            text-decoration: underline;
+            padding: 0 !important;
+            margin-top: 10px;
+        }
+
+        .logout-button > button:hover {
+            color: #1E3A8A !important;  /* hover blue */
+            text-decoration: none;
+            transform: none !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 
 def main():
@@ -80,71 +146,25 @@ def main():
         layout="centered"
     )
 
-    # -----------------------------------------------------
-    # CUSTOM CSS FOR MODERN UI
-    # -----------------------------------------------------
-    st.markdown("""
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-            html, body, [class*="css"] {
-                font-family: 'Inter', sans-serif;
-            }
-
-            .main-title {
-                font-size: 2.2rem;
-                font-weight: 700;
-                color: #1C1C1C;
-                text-align: center;
-                margin-bottom: 0.3rem;
-            }
-
-            .subtitle {
-                text-align: center;
-                color: #5C5C5C;
-                margin-bottom: 2rem;
-            }
-
-            .stTextInput>div>div>input, .stSelectbox>div>div>select {
-                background-color: #F8F9FB !important;
-                border-radius: 10px !important;
-            }
-
-            .stButton>button {
-                background: linear-gradient(90deg, #2563EB, #1E40AF);
-                color: white;
-                border: none;
-                padding: 0.6em 1.5em;
-                border-radius: 10px;
-                font-weight: 600;
-            }
-            .stButton>button:hover {
-                background: linear-gradient(90deg, #1E40AF, #2563EB);
-                transform: scale(1.02);
-                transition: 0.2s ease-in-out;
-            }
-
-            .stForm {
-                background-color: white;
-                border-radius: 15px;
-                padding: 2rem 2.5rem;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-            }
-
-            footer {visibility: hidden;}
-        </style>
-    """, unsafe_allow_html=True)
+    # License Gate
+    if not st.session_state.get("authenticated"):
+        check_license()
+        return
 
     # -----------------------------------------------------
     # SIDEBAR BRANDING
     # -----------------------------------------------------
     with st.sidebar:
-        st.image("cyphera.png", width=180)  # Add your logo in same folder as app.py
+        st.image("cyphera.png", width=180)
         st.markdown("### About Cyphera")
         st.write(
             "Cyphera helps organisations generate **AI-powered compliance documents** instantly. "
             "Built for startups, consultancies, and growing tech firms needing reliable documentation fast."
         )
         st.markdown("---")
+        if st.button("Log out", key="logout", help="End this session"):
+            st.session_state.clear()
+            st.rerun()
         st.write("🛡️ *Disclaimer: Generated documents are for informational purposes only and should be reviewed by a qualified professional before use.*")
 
     # -----------------------------------------------------
@@ -156,7 +176,6 @@ def main():
     # -----------------------------------------------------
     # INPUT FORM
     # -----------------------------------------------------
-    # st.title("AI Compliance Policy Generator")
     with st.form("policy_form"):
         company_name = st.text_input("Company Name", placeholder="e.g. FinTech Solutions Ltd")
         industry = st.text_input("Industry", placeholder="e.g. Finance")
@@ -209,7 +228,5 @@ def main():
 
 
 if __name__ == "__main__":
-    if not st.session_state.get("authenticated"):
-        check_license()
-    else:
-        main()
+    main()
+
